@@ -1,0 +1,80 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: companyanalyzer-backend
+    ports:
+      - "9080:9080"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - DATABASE_URL_SYNC=postgresql+psycopg2://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - ANALYSIS_MODEL=${ANALYSIS_MODEL:-gemma3:12b}
+      - PREPROCESSING_MODEL=${PREPROCESSING_MODEL:-gemma3:4b}
+      - MAX_CRAWL_PAGES=${MAX_CRAWL_PAGES:-10}
+      - CRAWL_DELAY_SECONDS=${CRAWL_DELAY_SECONDS:-2}
+      - FRONTEND_URL=http://localhost:4080
+      - BACKEND_URL=http://localhost:9080
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-CompanyAnalyzer}
+      - SMTP_USE_TLS=${SMTP_USE_TLS:-true}
+      # 모니터링 / 뉴스 수집
+      - NAVER_NEWS_CLIENT_ID=${NAVER_NEWS_CLIENT_ID:-}
+      - NAVER_NEWS_CLIENT_SECRET=${NAVER_NEWS_CLIENT_SECRET:-}
+      - GOOGLE_NEWS_RSS_LANG=${GOOGLE_NEWS_RSS_LANG:-ko}
+      - GOOGLE_NEWS_RSS_COUNTRY=${GOOGLE_NEWS_RSS_COUNTRY:-KR}
+      # RAG / ChromaDB
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+      - CHROMADB_PERSIST_DIR=/data/chromadb
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      # 스케줄러
+      - SCHEDULER_TZ=${SCHEDULER_TZ:-Asia/Seoul}
+      - DAILY_BRIEFING_HOUR=${DAILY_BRIEFING_HOUR:-8}
+      - WEEKLY_BRIEFING_DOW=${WEEKLY_BRIEFING_DOW:-mon}
+      - MONTHLY_BRIEFING_DAY=${MONTHLY_BRIEFING_DAY:-1}
+    volumes:
+      - ./backend:/app
+      - chromadb-data:/data/chromadb
+    networks:
+      - database-network
+      - companyanalyzer-network
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+
+  chromadb:
+    image: chromadb/chroma:0.5.5
+    container_name: companyanalyzer-chromadb
+    volumes:
+      - chromadb-data:/chroma/chroma
+    networks:
+      - companyanalyzer-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: companyanalyzer-frontend
+    ports:
+      - "4080:4080"
+    depends_on:
+      - backend
+    networks:
+      - companyanalyzer-network
+    restart: unless-stopped
+
+volumes:
+  chromadb-data:
+
+networks:
+  database-network:
+    external: true
+  companyanalyzer-network:
+    driver: bridge

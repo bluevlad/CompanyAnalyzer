@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>{{ company_name }} Daily Briefing — {{ period_label }}</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background:#f4f6fa; color:#1f2937; margin:0; padding:24px; }
+  .sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:12px; box-shadow:0 4px 24px rgba(15,23,42,.08); overflow:hidden; }
+  .header { background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%); color:#fff; padding:20px 28px; }
+  .header .label { font-size:11px; letter-spacing:2px; opacity:.85; }
+  .header h1 { margin:4px 0 0; font-size:22px; font-weight:700; }
+  .header .meta { margin-top:6px; font-size:12px; opacity:.85; }
+  .section { padding:18px 28px; border-bottom:1px solid #eef2f7; }
+  .section h2 { font-size:13px; font-weight:700; color:#1e3a8a; margin:0 0 10px; letter-spacing:.5px; text-transform:uppercase; }
+  .summary { background:#eef4ff; padding:14px 16px; border-radius:8px; font-size:14px; line-height:1.55; }
+  .summary .lead { font-size:15px; font-weight:700; color:#1e3a8a; margin-bottom:8px; }
+  .summary ul { margin:0; padding-left:18px; }
+  .summary li { margin-bottom:4px; }
+  .events .card { padding:10px 12px; margin-bottom:8px; background:#fafbff; border-left:3px solid #2563eb; border-radius:6px; }
+  .events .card .title { font-size:13px; font-weight:600; color:#0f172a; }
+  .events .card .desc { font-size:12px; color:#475569; margin-top:3px; line-height:1.5; }
+  .events .card .ref { font-size:11px; color:#64748b; margin-top:4px; }
+  .events .card a { color:#2563eb; text-decoration:none; }
+  .actions .item { display:flex; align-items:flex-start; padding:10px 12px; margin-bottom:8px; background:#fff7ed; border-left:3px solid #f97316; border-radius:6px; }
+  .actions .num { font-weight:700; color:#c2410c; min-width:24px; }
+  .actions .body { flex:1; }
+  .actions .action { font-size:13px; font-weight:600; color:#7c2d12; }
+  .actions .rationale { font-size:11px; color:#9a3412; margin-top:3px; }
+  .metrics { display:flex; gap:8px; flex-wrap:wrap; }
+  .metrics .chip { background:#f1f5f9; color:#334155; font-size:11px; padding:5px 10px; border-radius:999px; }
+  .sentiment { display:flex; gap:14px; font-size:12px; color:#475569; }
+  .sentiment .pos { color:#15803d; }
+  .sentiment .neu { color:#64748b; }
+  .sentiment .neg { color:#b91c1c; }
+  .footer { padding:14px 28px; font-size:11px; color:#94a3b8; background:#fafbff; }
+  .footer a { color:#2563eb; text-decoration:none; }
+</style>
+</head>
+<body>
+  <div class="sheet">
+
+    <div class="header">
+      <div class="label">DAILY EXECUTIVE BRIEFING</div>
+      <h1>{{ company_name }}</h1>
+      <div class="meta">{{ period_label }} · 외부 언급 {{ mention_count }}건 분석</div>
+    </div>
+
+    {% if ai.headline %}
+    <div class="section">
+      <h2>오늘의 한 줄</h2>
+      <div class="summary">
+        <div class="lead">{{ ai.headline }}</div>
+        {% if ai.summary_3lines %}
+        <ul>
+          {% for line in ai.summary_3lines %}<li>{{ line }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if ai.key_events %}
+    <div class="section events">
+      <h2>오늘의 시사점</h2>
+      {% for ev in ai.key_events %}
+      <div class="card">
+        <div class="title">{{ loop.index }}. {{ ev.title }}</div>
+        <div class="desc">{{ ev.description }}</div>
+        <div class="ref">
+          {% if ev.evidence_refs %}출처 {{ ev.evidence_refs|join(', ') }}{% endif %}
+          {% if ev.evidence_url %} · <a href="{{ ev.evidence_url }}">원문</a>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if ai.executive_actions %}
+    <div class="section actions">
+      <h2>경영자 지침 (조직원 전달용)</h2>
+      {% for act in ai.executive_actions %}
+      <div class="item">
+        <div class="num">{{ loop.index }}.</div>
+        <div class="body">
+          <div class="action">{{ act.action }}</div>
+          {% if act.rationale %}<div class="rationale">근거: {{ act.rationale }} {% if act.evidence_refs %}({{ act.evidence_refs|join(', ') }}){% endif %}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if ai.watch_metrics or ai.sentiment_overview %}
+    <div class="section">
+      <h2>모니터링 지표</h2>
+      {% if ai.sentiment_overview %}
+      <div class="sentiment">
+        <span class="pos">긍정 {{ ai.sentiment_overview.positive or 0 }}</span>
+        <span class="neu">중립 {{ ai.sentiment_overview.neutral or 0 }}</span>
+        <span class="neg">부정 {{ ai.sentiment_overview.negative or 0 }}</span>
+        {% if ai.sentiment_overview.note %}<span>· {{ ai.sentiment_overview.note }}</span>{% endif %}
+      </div>
+      {% endif %}
+      {% if ai.watch_metrics %}
+      <div class="metrics" style="margin-top:8px;">
+        {% for m in ai.watch_metrics %}<span class="chip">{{ m }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if mentions %}
+    <div class="section">
+      <h2>참고 출처 (Top {{ mentions|length }})</h2>
+      <div style="font-size:11px; color:#475569; line-height:1.7;">
+        {% for m in mentions %}
+        [#{{ loop.index }}] <a href="{{ m.url }}" style="color:#2563eb; text-decoration:none;">{{ m.title or m.url }}</a>
+        <span style="color:#94a3b8;">— {{ m.source_name or '' }}{% if m.published_at %} · {{ m.published_at }}{% endif %}</span><br>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+      CompanyAnalyzer · {{ company_name }} 모니터링 · {{ generated_at }}<br>
+      본 브리핑은 외부 공개 자료를 바탕으로 AI가 자동 생성한 것이며, 의사결정의 단일 근거로 사용해서는 안 됩니다.
+    </div>
+
+  </div>
+</body>
+</html>

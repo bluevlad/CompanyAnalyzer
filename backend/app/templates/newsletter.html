@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ company_name }} 분석 결과</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5;">
+<tr>
+<td align="center" style="padding: 24px 16px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+  <!-- Header -->
+  <tr>
+  <td style="background-color: #1976d2; padding: 32px 24px; text-align: center;">
+    <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold;">CompanyAnalyzer</h1>
+    <p style="margin: 8px 0 0; color: #bbdefb; font-size: 14px;">AI 기업 홈페이지 분석 리포트</p>
+  </td>
+  </tr>
+
+  <!-- Company Summary -->
+  <tr>
+  <td style="padding: 32px 24px 16px;">
+    <h2 style="margin: 0 0 8px; color: #212121; font-size: 22px;">{{ company_name }}</h2>
+    {% if one_line_summary %}
+    <p style="margin: 0; color: #555555; font-size: 16px; font-style: italic;">"{{ one_line_summary }}"</p>
+    {% endif %}
+  </td>
+  </tr>
+
+  <!-- Scores -->
+  {% if scores and scores.overall %}
+  <tr>
+  <td style="padding: 8px 24px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #fafafa; border-radius: 8px;">
+    <tr>
+    <td align="center" style="padding: 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0">
+      <tr>
+        {% if scores.business %}
+        <td align="center" style="padding: 0 16px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: {{ '#4caf50' if scores.business >= 8 else '#ff9800' if scores.business >= 6 else '#f44336' }}; color: #ffffff; font-size: 20px; font-weight: bold; line-height: 56px; text-align: center;">{{ scores.business }}</div>
+          <p style="margin: 8px 0 0; color: #666666; font-size: 12px;">사업</p>
+        </td>
+        {% endif %}
+        {% if scores.digital %}
+        <td align="center" style="padding: 0 16px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: {{ '#4caf50' if scores.digital >= 8 else '#ff9800' if scores.digital >= 6 else '#f44336' }}; color: #ffffff; font-size: 20px; font-weight: bold; line-height: 56px; text-align: center;">{{ scores.digital }}</div>
+          <p style="margin: 8px 0 0; color: #666666; font-size: 12px;">디지털</p>
+        </td>
+        {% endif %}
+        {% if scores.branding %}
+        <td align="center" style="padding: 0 16px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: {{ '#4caf50' if scores.branding >= 8 else '#ff9800' if scores.branding >= 6 else '#f44336' }}; color: #ffffff; font-size: 20px; font-weight: bold; line-height: 56px; text-align: center;">{{ scores.branding }}</div>
+          <p style="margin: 8px 0 0; color: #666666; font-size: 12px;">브랜딩</p>
+        </td>
+        {% endif %}
+        {% if scores.overall %}
+        <td align="center" style="padding: 0 16px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: {{ '#4caf50' if scores.overall >= 8 else '#ff9800' if scores.overall >= 6 else '#f44336' }}; color: #ffffff; font-size: 20px; font-weight: bold; line-height: 56px; text-align: center;">{{ scores.overall }}</div>
+          <p style="margin: 8px 0 0; color: #666666; font-size: 12px;">종합</p>
+        </td>
+        {% endif %}
+      </tr>
+      </table>
+    </td>
+    </tr>
+    </table>
+  </td>
+  </tr>
+  {% endif %}
+
+  <!-- Strengths -->
+  {% if top_strengths %}
+  <tr>
+  <td style="padding: 0 24px 24px;">
+    <h3 style="margin: 0 0 12px; color: #4caf50; font-size: 18px;">주요 강점</h3>
+    {% for item in top_strengths %}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8px;">
+    <tr>
+    <td style="padding: 14px 16px; background-color: #f1f8e9; border-radius: 6px; border-left: 4px solid #4caf50;">
+      <p style="margin: 0; font-weight: bold; color: #212121; font-size: 14px;">{{ item.rank }}. {{ item.title }}</p>
+      {% if item.description %}
+      <p style="margin: 4px 0 0; color: #555555; font-size: 13px;">{{ item.description }}</p>
+      {% endif %}
+    </td>
+    </tr>
+    </table>
+    {% endfor %}
+  </td>
+  </tr>
+  {% endif %}
+
+  <!-- Improvements -->
+  {% if top_improvements %}
+  <tr>
+  <td style="padding: 0 24px 24px;">
+    <h3 style="margin: 0 0 12px; color: #ff9800; font-size: 18px;">개선 필요 사항</h3>
+    {% for item in top_improvements %}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8px;">
+    <tr>
+    <td style="padding: 14px 16px; background-color: #fff8e1; border-radius: 6px; border-left: 4px solid #ff9800;">
+      <p style="margin: 0; font-weight: bold; color: #212121; font-size: 14px;">{{ item.rank }}. {{ item.title }}</p>
+      {% if item.description %}
+      <p style="margin: 4px 0 0; color: #555555; font-size: 13px;">{{ item.description }}</p>
+      {% endif %}
+      {% if item.suggestion %}
+      <p style="margin: 8px 0 0; color: #1976d2; font-size: 13px;">제안: {{ item.suggestion }}</p>
+      {% endif %}
+    </td>
+    </tr>
+    </table>
+    {% endfor %}
+  </td>
+  </tr>
+  {% endif %}
+
+  <!-- Overall Assessment -->
+  {% if overall_assessment %}
+  <tr>
+  <td style="padding: 0 24px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+    <td style="padding: 20px; background-color: #e8eaf6; border-radius: 8px;">
+      <h3 style="margin: 0 0 8px; color: #212121; font-size: 16px;">종합 평가</h3>
+      <p style="margin: 0; color: #333333; font-size: 14px; line-height: 1.6;">{{ overall_assessment }}</p>
+    </td>
+    </tr>
+    </table>
+  </td>
+  </tr>
+  {% endif %}
+
+  <!-- CTA Button -->
+  {% if result_url %}
+  <tr>
+  <td align="center" style="padding: 0 24px 32px;">
+    <a href="{{ result_url }}" style="display: inline-block; background-color: #1976d2; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: bold;">자세한 결과 보기</a>
+  </td>
+  </tr>
+  {% endif %}
+
+  <!-- Meta Info -->
+  <tr>
+  <td style="padding: 16px 24px; background-color: #fafafa; border-top: 1px solid #eeeeee;">
+    <p style="margin: 0; color: #999999; font-size: 12px; text-align: center;">
+      크롤링: {{ crawled_pages }}페이지 |
+      토큰: {{ "{:,}".format(total_tokens) if total_tokens else "0" }} |
+      소요시간: {{ "%.1f"|format(analysis_duration) if analysis_duration else "-" }}초
+      {% if completed_at %} | 분석일시: {{ completed_at }}{% endif %}
+    </p>
+  </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr>
+  <td style="padding: 16px 24px; background-color: #f5f5f5; text-align: center;">
+    <p style="margin: 0; color: #999999; font-size: 11px;">
+      이 이메일은 CompanyAnalyzer에서 발송되었습니다.
+    </p>
+  </td>
+  </tr>
+
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

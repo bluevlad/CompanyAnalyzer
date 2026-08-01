@@ -1,0 +1,554 @@
+.gateway-landing-root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.85);
+    --card-bg-hover: rgba(30, 41, 59, 0.95);
+    --text-color: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent-color: #3b82f6;
+    --border-color: rgba(148, 163, 184, 0.15);
+    --service-color: #0ea5e9;
+    --glow-r: 14;
+    --glow-g: 165;
+    --glow-b: 233;
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.gateway-landing-root::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+
+.gateway-landing-root::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(ellipse at 30% 10%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 90%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.gateway-landing-root .sl-container {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 2rem 3rem;
+}
+
+/* ── Hero ── */
+.gateway-landing-root .sl-hero {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--card-bg);
+    position: relative;
+    overflow: hidden;
+    animation: glFadeInUp 0.7s ease-out 0.1s backwards;
+}
+
+.gateway-landing-root .sl-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--service-color), transparent);
+}
+
+.gateway-landing-root .sl-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.3rem;
+    color: #f1f5f9;
+}
+
+.gateway-landing-root .sl-hero .tagline {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    margin: 0 0 0.4rem;
+}
+
+.gateway-landing-root .sl-hero .desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.65;
+}
+
+/* ── Section titles ── */
+.gateway-landing-root .sl-section {
+    margin-bottom: 1.75rem;
+}
+
+.gateway-landing-root .sl-section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--service-color);
+    margin-bottom: 0.85rem;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--service-color);
+}
+
+/* ── Features Grid ── */
+.gateway-landing-root .sl-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+    animation: glFadeInUp 0.7s ease-out 0.2s backwards;
+}
+
+.gateway-landing-root .sl-feature {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    color: inherit;
+}
+
+.gateway-landing-root .sl-feature:hover {
+    background: var(--card-bg-hover);
+    border-color: rgba(148, 163, 184, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.3);
+}
+
+.gateway-landing-root .sl-feature[data-locked="true"] {
+    opacity: 0.78;
+}
+
+.gateway-landing-root .sl-feature[data-locked="true"]:hover {
+    opacity: 1;
+}
+
+.gateway-landing-root .sl-feature-lock {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.7rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1;
+}
+
+.gateway-landing-root .sl-feature[data-locked="true"]:hover .sl-feature-lock {
+    color: var(--text-muted);
+}
+
+.gateway-landing-root .sl-feature-icon {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.gateway-landing-root .sl-feature-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 0.3rem;
+}
+
+.gateway-landing-root .sl-feature-desc {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+}
+
+.gateway-landing-root .sl-feature-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin-top: 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--text-muted);
+}
+
+.gateway-landing-root .sl-feature-tag--public {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.gateway-landing-root .sl-feature-tag--member-locked {
+    background: rgba(245, 158, 11, 0.14);
+    color: #fbbf24;
+}
+
+.gateway-landing-root .sl-feature-tag--admin-locked {
+    background: rgba(239, 68, 68, 0.14);
+    color: #f87171;
+}
+
+.gateway-landing-root .sl-feature-tag--granted {
+    background: rgba(16, 185, 129, 0.08);
+    color: rgba(52, 211, 153, 0.85);
+}
+
+/* ── Architecture Diagram ── */
+.gateway-landing-root .sl-arch {
+    animation: glFadeInUp 0.7s ease-out 0.3s backwards;
+}
+
+.gateway-landing-root .sl-arch-diagram {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+.gateway-landing-root .sl-arch-node {
+    text-align: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.6);
+    min-width: 100px;
+}
+
+.gateway-landing-root .sl-arch-node-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 0.2rem;
+}
+
+.gateway-landing-root .sl-arch-node-tech {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+}
+
+.gateway-landing-root .sl-arch-node-tech-sub {
+    opacity: 0.7;
+    font-size: 0.85em;
+}
+
+.gateway-landing-root .sl-arch-node.highlight {
+    border-color: var(--service-color);
+    box-shadow: 0 0 12px rgba(14, 165, 233, 0.15);
+}
+
+.gateway-landing-root .sl-arch-arrow {
+    padding: 0 0.6rem;
+    color: var(--text-dim);
+    font-size: 1rem;
+}
+
+/* ── Flow Diagram ── */
+.gateway-landing-root .sl-flow {
+    animation: glFadeInUp 0.7s ease-out 0.35s backwards;
+}
+
+.gateway-landing-root .sl-flow-steps {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+}
+
+.gateway-landing-root .sl-flow-step {
+    text-align: center;
+    flex-shrink: 0;
+    padding: 0.6rem 0.8rem;
+}
+
+.gateway-landing-root .sl-flow-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(14, 165, 233, 0.15);
+    color: var(--service-color);
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.gateway-landing-root .sl-flow-step-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+}
+
+.gateway-landing-root .sl-flow-step-desc {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+
+.gateway-landing-root .sl-flow-arrow {
+    flex-shrink: 0;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding: 0 0.3rem;
+    opacity: 0.5;
+}
+
+/* ── Tech Stack ── */
+.gateway-landing-root .sl-tech {
+    animation: glFadeInUp 0.7s ease-out 0.4s backwards;
+}
+
+.gateway-landing-root .sl-tech-list {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.gateway-landing-root .sl-tech-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: border-color 0.2s;
+}
+
+.gateway-landing-root .sl-tech-badge:hover {
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.gateway-landing-root .sl-tech-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+/* ── Connected Services ── */
+.gateway-landing-root .sl-connected {
+    animation: glFadeInUp 0.7s ease-out 0.45s backwards;
+}
+
+.gateway-landing-root .sl-connected-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.7rem;
+}
+
+.gateway-landing-root .sl-connected-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+    color: inherit;
+}
+
+.gateway-landing-root .sl-connected-card:hover {
+    background: var(--card-bg-hover);
+    border-color: rgba(148, 163, 184, 0.25);
+    transform: translateY(-1px);
+}
+
+.gateway-landing-root .sl-connected-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.gateway-landing-root .sl-connected-info {
+    flex: 1;
+}
+
+.gateway-landing-root .sl-connected-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.gateway-landing-root .sl-connected-role {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+}
+
+.gateway-landing-root .sl-connected-arrow {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    transition: color 0.2s;
+}
+
+.gateway-landing-root .sl-connected-card:hover .sl-connected-arrow {
+    color: var(--service-color);
+}
+
+/* ── Toast ── */
+.gateway-landing-root .sl-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.7rem 1rem 0.7rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.82rem;
+    color: var(--text-color);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    animation: glToastIn 0.25s ease-out;
+    z-index: 1000;
+    max-width: calc(100vw - 2rem);
+}
+
+.gateway-landing-root .sl-toast-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.gateway-landing-root .sl-toast-msg {
+    flex: 1;
+}
+
+.gateway-landing-root .sl-toast-action {
+    color: var(--service-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.gateway-landing-root .sl-toast-action:hover {
+    background: rgba(14, 165, 233, 0.12);
+    border-color: var(--service-color);
+}
+
+.gateway-landing-root .sl-toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.15rem;
+    transition: color 0.15s;
+}
+
+.gateway-landing-root .sl-toast-close:hover {
+    color: var(--text-color);
+}
+
+/* ── Animations ── */
+@keyframes glFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glToastIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 12px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .gateway-landing-root .sl-container {
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .gateway-landing-root .sl-hero h1 {
+        font-size: 1.6rem;
+    }
+
+    .gateway-landing-root .sl-hero {
+        padding: 1.75rem 1rem;
+    }
+
+    .gateway-landing-root .sl-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gateway-landing-root .sl-arch-diagram {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .gateway-landing-root .sl-arch-arrow {
+        transform: rotate(90deg);
+        padding: 0.3rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .gateway-landing-root .sl-features {
+        grid-template-columns: 1fr;
+    }
+
+    .gateway-landing-root .sl-connected-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gateway-landing-root .sl-flow-steps {
+        padding: 1rem;
+    }
+}

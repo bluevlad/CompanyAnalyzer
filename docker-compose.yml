@@ -1,0 +1,131 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: companyanalyzer-redis
+    ports:
+      - "6389:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - companyanalyzer-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: companyanalyzer-backend
+    ports:
+      - "9080:9080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - DATABASE_URL_SYNC=postgresql+psycopg2://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - REDIS_URL=redis://redis:6379/0
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - ANALYSIS_MODEL=${ANALYSIS_MODEL:-gemma3:12b}
+      - PREPROCESSING_MODEL=${PREPROCESSING_MODEL:-gemma3:4b}
+      - MAX_CRAWL_PAGES=${MAX_CRAWL_PAGES:-10}
+      - CRAWL_DELAY_SECONDS=${CRAWL_DELAY_SECONDS:-2}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:4080}
+      - BACKEND_URL=${BACKEND_URL:-http://localhost:9080}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-CompanyAnalyzer}
+      - SMTP_USE_TLS=${SMTP_USE_TLS:-true}
+      # 모니터링 / 뉴스 수집
+      - NAVER_NEWS_CLIENT_ID=${NAVER_NEWS_CLIENT_ID:-}
+      - NAVER_NEWS_CLIENT_SECRET=${NAVER_NEWS_CLIENT_SECRET:-}
+      - GOOGLE_NEWS_RSS_LANG=${GOOGLE_NEWS_RSS_LANG:-ko}
+      - GOOGLE_NEWS_RSS_COUNTRY=${GOOGLE_NEWS_RSS_COUNTRY:-KR}
+      # RAG / ChromaDB (PersistentClient는 backend 컨테이너 내부 볼륨 사용)
+      - CHROMADB_PERSIST_DIR=/data/chromadb
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      # 스케줄러
+      - SCHEDULER_TZ=${SCHEDULER_TZ:-Asia/Seoul}
+      - DAILY_BRIEFING_HOUR=${DAILY_BRIEFING_HOUR:-8}
+      - WEEKLY_BRIEFING_DOW=${WEEKLY_BRIEFING_DOW:-mon}
+      - MONTHLY_BRIEFING_DAY=${MONTHLY_BRIEFING_DAY:-1}
+      # JWT / OAuth (Google GSI는 CLIENT_SECRET 불필요)
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - SUPER_ADMIN_EMAILS=${SUPER_ADMIN_EMAILS:-}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-secret-change-me}
+    volumes:
+      - chromadb-data:/data/chromadb
+    networks:
+      - database-network
+      - companyanalyzer-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: companyanalyzer-worker
+    command: ["arq", "app.worker.settings.WorkerSettings"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - DATABASE_URL_SYNC=postgresql+psycopg2://postgres:${DB_PASSWORD:?DB_PASSWORD is required}@postgresql:5432/companyanalyzer
+      - REDIS_URL=redis://redis:6379/0
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - ANALYSIS_MODEL=${ANALYSIS_MODEL:-gemma3:12b}
+      - PREPROCESSING_MODEL=${PREPROCESSING_MODEL:-gemma3:4b}
+      - MAX_CRAWL_PAGES=${MAX_CRAWL_PAGES:-10}
+      - CRAWL_DELAY_SECONDS=${CRAWL_DELAY_SECONDS:-2}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-CompanyAnalyzer}
+      - SMTP_USE_TLS=${SMTP_USE_TLS:-true}
+      - CHROMADB_PERSIST_DIR=/data/chromadb
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+    volumes:
+      - chromadb-data:/data/chromadb
+    networks:
+      - database-network
+      - companyanalyzer-network
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: companyanalyzer-frontend
+    ports:
+      - "4080:4080"
+    depends_on:
+      - backend
+    networks:
+      - companyanalyzer-network
+    restart: always
+
+volumes:
+  chromadb-data:
+  redis-data:
+
+networks:
+  database-network:
+    external: true
+  companyanalyzer-network:
+    driver: bridge

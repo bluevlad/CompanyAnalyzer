@@ -12,6 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Docker 명령은 현재 호스트에서 바로 실행 (별도 SSH 접속 불필요)
 - compose 파일 선택: Darwin → `docker-compose.yml` / Windows → `docker-compose.local.yml`
 
+> 3-머신 작업 환경(MacBook 편집·운영 / Desktop 터미널·AutoQA / Notebook TIPAIP2 격리) 규칙: [WORKSTATION_GUIDE.md](https://github.com/bluevlad/Claude-Opus-bluevlad/blob/main/infrastructure/environments/WORKSTATION_GUIDE.md) — 개인 서비스 편집은 MacBook 에서만, Desktop 은 pull-only
+
 ## Project Overview
 
 CompanyAnalyzer - 기업 홈페이지 기반 AI 강점/개선점 분석 시스템 (URL 크롤링 → 콘텐츠 전처리 → Claude AI 분석 → 구조화된 리포트)

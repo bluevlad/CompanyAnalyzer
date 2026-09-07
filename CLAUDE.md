@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Docker 명령은 현재 호스트에서 바로 실행 (별도 SSH 접속 불필요)
 - compose 파일 선택: Darwin → `docker-compose.yml` / Windows → `docker-compose.local.yml`
 
-> 3-머신 작업 환경(MacBook 편집·운영 / Desktop 터미널·AutoQA / Notebook TIPAIP2 격리) 규칙: [WORKSTATION_GUIDE.md](https://github.com/bluevlad/Claude-Opus-bluevlad/blob/main/infrastructure/environments/WORKSTATION_GUIDE.md) — 개인 서비스 편집은 MacBook 에서만, Desktop 은 pull-only
+> 3-머신 작업 환경(MacBook 편집·운영 / Desktop 터미널·AutoQA / Notebook TIPAIP2 격리) 규칙: [WORKSTATION_GUIDE.md](https://github.com/bluevlad/Ai-Legacy-bluevlad/blob/main/infrastructure/environments/WORKSTATION_GUIDE.md) — 개인 서비스 편집은 MacBook 에서만, Desktop 은 pull-only
 
 ## Project Overview
 
@@ -138,12 +138,12 @@ BACKEND_URL=               # 백엔드 URL
 
 ### 문서 참조 경로
 - 코드 문서: `CompanyAnalyzer/docs/`
-- 프로젝트 문서: `C:/GIT/Claude-Opus-bluevlad/docs/CompanyAnalyzer/`
+- 프로젝트 문서: `C:/GIT/Ai-Legacy-bluevlad/docs/CompanyAnalyzer/`
   - 기획서, WBS, IMPLEMENTATION.md, 로드맵
 
 ### 문서 작성 규칙
 - 코드 관련 (API 변경, 환경설정): `CompanyAnalyzer/docs/`
-- 기획/설계/로드맵: `C:/GIT/Claude-Opus-bluevlad/docs/CompanyAnalyzer/`
+- 기획/설계/로드맵: `C:/GIT/Ai-Legacy-bluevlad/docs/CompanyAnalyzer/`
 
 ## Deployment
 
